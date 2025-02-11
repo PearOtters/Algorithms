@@ -291,6 +291,24 @@ public class SortingAlgorithms
     public static void medianOf3(int[] input, int p, int r)
     {
         if (r <= p) return;
+        swap(input, (p+r)/2, r-1);
+        if (input[r-1] < input[p]) swap (input, p, r-1);
+        if (input[r] < input[p]) swap (input, p, r);
+        if (input[r] < input[r-1]) swap (input, r-1, r);
+        int q = partition(input, p, r);
+        medianOf3(input, p, q-1);
+        medianOf3(input, q+1, r);
+    }
+
+    public static int[] dutchFlag(int[] input)
+    {
+        dutchFlag(input, 0, input.length-1);
+        return input;
+    }
+
+    public static void dutchFlag(int[] input, int p, int r)
+    {
+        if (r <= p) return;
         int v = input[r];
         int i = p-1, j=r, l=p-1, q=r, k;
         for (;;)
@@ -307,12 +325,7 @@ public class SortingAlgorithms
         i++;
         for (k = p; k <= l; k++, j--) swap(input, k, j);
         for (k = r-1; k >= q; k--, i++) swap(input, k, i);
-        medianOf3(input, p, j);
-        medianOf3(input, i, r);
-    }
-
-    public static int[] dutchFlag(int[] input)
-    {
-        return input;
+        dutchFlag(input, p, j);
+        dutchFlag(input, i, r);
     }
 }
