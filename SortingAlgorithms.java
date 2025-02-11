@@ -70,10 +70,10 @@ public class SortingAlgorithms
 
     public static long timeAlgorithm(Function<int[], int[]> func, int[] input, boolean print)
     {
-        long startTime = System.currentTimeMillis();
+        long startTime = System.nanoTime();
         if (print) { System.out.println("Start Time: " + startTime); }
         func.apply(Arrays.copyOf(input, input.length));
-        long endTime = System.currentTimeMillis();
+        long endTime = System.nanoTime();
         if (print) { System.out.println("End Time: " + endTime); }
         return endTime - startTime;
     }
@@ -185,46 +185,26 @@ public class SortingAlgorithms
     {
         if (p < r)
         {
-            int q = (p + r) / 2;
-            hybridMergeSort(input, p, q);
-            hybridMergeSort(input, q + 1, r);
-            Hybridmerge(input, p, q, r);
-        }
-    }
-
-    private static void Hybridmerge(int[] input, int p, int q, int r)
-    {
-        if (r - p + 1 > 32)
-        {
-            int[] L = IntStream.concat(Arrays.stream(Arrays.copyOfRange(input, p, q + 1)), Arrays.stream(new int[]{ Integer.MAX_VALUE })).toArray();
-            int[] R = IntStream.concat(Arrays.stream(Arrays.copyOfRange(input, q + 1, r + 1)), Arrays.stream(new int[]{ Integer.MAX_VALUE })).toArray();
-            int i = 0, j = 0;
-            for (int k = p; k <= r; k++)
+            if (r - p + 1 > 64)
             {
-                if (L[i] <= R[j])
-                {
-                    input[k] = L[i];
-                    i++;
-                }
-                else
-                {
-                    input[k] = R[j];
-                    j++;
-                }
+                int q = (p + r) / 2;
+                hybridMergeSort(input, p, q);
+                hybridMergeSort(input, q + 1, r);
+                merge(input, p, q, r);
             }
-        }
-        else
-        {
-            for (int j = p + 1; j <= r; j++)
+            else
             {
-                int key = input[j];
-                int i = j - 1;
-                while (i >= p && input[i] > key)
+                for (int j = p + 1; j <= r; j++)
                 {
-                    input[i + 1] = input[i];
-                    i--;
+                    int key = input[j];
+                    int i = j - 1;
+                    while (i >= p && input[i] > key)
+                    {
+                        input[i + 1] = input[i];
+                        i--;
+                    }
+                    input[i + 1] = key;
                 }
-                input[i + 1] = key;
             }
         }
     }

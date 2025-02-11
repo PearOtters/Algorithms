@@ -5,7 +5,6 @@ public class Main
 {
     public static void main(String[] args)
     {
-
         Map<String, int[]> textfiles = new LinkedHashMap<>();
         textfiles.put("int10.txt", SortingAlgorithms.getInputFromText("int10.txt")); 
         textfiles.put("int50.txt", SortingAlgorithms.getInputFromText("int50.txt")); 
@@ -43,7 +42,7 @@ public class Main
             for (String funcName : SortingAlgorithms.funcs.keySet())
             {
                 long algDuration = SortingAlgorithms.timeAlgorithm(SortingAlgorithms.funcs.get(funcName), textfiles.get(textfile).clone(), false);
-                System.out.println(funcName + " took " + algDuration + "ms to sort");
+                System.out.println(funcName + " took " + algDuration + "ns or " + algDuration / 1_000_000 + "ms to sort");
             }
             System.out.println("\n____________________________________________________________________\n\n");
         }
