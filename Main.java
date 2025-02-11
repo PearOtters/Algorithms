@@ -16,7 +16,7 @@ public class Main
         textfiles.put("int500k.txt", SortingAlgorithms.getInputFromText("int500k.txt")); 
         textfiles.put("intBig.txt", SortingAlgorithms.getInputFromText("intBig.txt")); 
 
-        //boolean isSorted = SortingAlgorithms.testSortingAlgorithm(SortingAlgorithms::hybridMergeSort, textfiles.get("int100.txt").clone(), true);
+        //boolean isSorted = SortingAlgorithms.testSortingAlgorithm(SortingAlgorithms::medianOf3, textfiles.get("int100.txt").clone(), true);
         //System.out.println("Is sorted: " + isSorted);
 
         testAlgorithms(textfiles.get("int100.txt"));

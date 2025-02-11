@@ -20,9 +20,9 @@ public class SortingAlgorithms
         funcs.put("Merge-Insertion sort", SortingAlgorithms::hybridMergeSort); 
         funcs.put("Bottom Up Merge sort", SortingAlgorithms::bottomUpMergeSort); 
         funcs.put("Quick sort", SortingAlgorithms::quickSort); 
+        funcs.put("Quick-Insertion sort", SortingAlgorithms::hybridQuickSort); 
         funcs.put("Median of 3 Quick sort", SortingAlgorithms::medianOf3); 
         funcs.put("Dutch Flag Quick sort", SortingAlgorithms::dutchFlag); 
-        funcs.put("Quick-Insertion sort", SortingAlgorithms::hybridQuickSort); 
     }
 
     public static int[] getInputFromText(String filename)
@@ -78,6 +78,13 @@ public class SortingAlgorithms
         return endTime - startTime;
     }
 
+    public static void swap(int[] input, int i, int j)
+    {
+        int temp = input[i];
+        input[i] = input[j];
+        input[j] = temp;
+    }
+
     public static int[] insertionSort(int[] input)
     {
         int n = input.length;
@@ -95,6 +102,21 @@ public class SortingAlgorithms
         return input;
     }
 
+    public static void insertionSort(int[] input, int p, int r)
+    {
+        for (int j = p + 1; j <= r; j++)
+        {
+            int key = input[j];
+            int i = j - 1;
+            while (i >= p && input[i] > key)
+            {
+                input[i + 1] = input[i];
+                i--;
+            }
+            input[i + 1] = key;
+        }
+    }
+
     public static int[] selectionSort(int[] input)
     {
         int n = input.length;
@@ -108,9 +130,7 @@ public class SortingAlgorithms
                     minIndex = j;
                 }
             }
-            int temp = input[i];
-            input[i] = input[minIndex];
-            input[minIndex] = temp;
+            swap(input, i, minIndex);
         }
         return input;
     }
@@ -128,9 +148,7 @@ public class SortingAlgorithms
             {
                 for (int j = i; j >= h && input[j] < input[j-h]; j-=h)
                 {
-                    int temp = input[j];
-                    input[j] = input[j - h];
-                    input[j - h] = temp;
+                    swap(input, j, j - h);
                 }
             }
             h /= 3;
@@ -194,17 +212,7 @@ public class SortingAlgorithms
             }
             else
             {
-                for (int j = p + 1; j <= r; j++)
-                {
-                    int key = input[j];
-                    int i = j - 1;
-                    while (i >= p && input[i] > key)
-                    {
-                        input[i + 1] = input[i];
-                        i--;
-                    }
-                    input[i + 1] = key;
-                }
+                insertionSort(input, p, r);
             }
         }
     }
@@ -252,28 +260,58 @@ public class SortingAlgorithms
             if (input[j] <= x)
             {
                 i++;
-                int temp = input[i];
-                input[i] = input[j];
-                input[j] = temp;
+                swap(input, i, j);
             }
         }
-        int temp = input[i + 1];
-        input[i + 1] = input[r];
-        input[r] = temp;
+        swap(input, i + 1, r);
         return i + 1;
+    }
+
+    public static int[] hybridQuickSort(int[] input)
+    {
+        hybridQuickSort(input, 0, input.length-1);
+        insertionSort(input, 0, input.length-1);
+        return input;   
+    }
+
+    private static void hybridQuickSort(int[] input, int p, int r)
+    {
+        if (r - p <= 64) return;
+        int q = partition(input, p, r);
+        hybridQuickSort(input, p, q-1);
+        hybridQuickSort(input, q+1, r);
     }
 
     public static int[] medianOf3(int[] input)
     {
+        medianOf3(input, 0, input.length-1);
         return input;
+    }
+
+    public static void medianOf3(int[] input, int p, int r)
+    {
+        if (r <= p) return;
+        int v = input[r];
+        int i = p-1, j=r, l=p-1, q=r, k;
+        for (;;)
+        {
+            while (input[++i] < v);
+            while (v < input[--j]) if (j == p) break;
+            if (i >= j) break;
+            swap(input, i, j);
+            if (input[i] == v) { l++; swap(input, l, i); }
+            if (v == input[j]) { q--; swap(input, q, j); }
+        }
+        swap(input, i, r);
+        j = i-1;
+        i++;
+        for (k = p; k <= l; k++, j--) swap(input, k, j);
+        for (k = r-1; k >= q; k--, i++) swap(input, k, i);
+        medianOf3(input, p, j);
+        medianOf3(input, i, r);
     }
 
     public static int[] dutchFlag(int[] input)
-    {
-        return input;
-    }
-
-    public static int[] hybridQuickSort(int[] input)
     {
         return input;
     }
