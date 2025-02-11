@@ -25,15 +25,15 @@ public class SortingAlgorithms
         funcs.put("Median of 3 Quick sort", QuickSort::medianOf3); 
         funcs.put("Dutch Flag Quick sort", QuickSort::dutchFlag); 
 
-        textfiles.put("int10.txt", SortingAlgorithms.getInputFromText("int10.txt")); 
-        textfiles.put("int50.txt", SortingAlgorithms.getInputFromText("int50.txt")); 
-        textfiles.put("int100.txt", SortingAlgorithms.getInputFromText("int100.txt")); 
-        textfiles.put("int1000.txt", SortingAlgorithms.getInputFromText("int1000.txt")); 
-        textfiles.put("bad.txt", SortingAlgorithms.getInputFromText("bad.txt")); 
-        textfiles.put("int20k.txt", SortingAlgorithms.getInputFromText("int20k.txt")); 
-        textfiles.put("dutch.txt", SortingAlgorithms.getInputFromText("dutch.txt")); 
-        textfiles.put("int500k.txt", SortingAlgorithms.getInputFromText("int500k.txt")); 
-        textfiles.put("intBig.txt", SortingAlgorithms.getInputFromText("intBig.txt")); 
+        textfiles.put("int10.txt", SortingAlgorithms.getInputFromText("textfiles/int10.txt")); 
+        textfiles.put("int50.txt", SortingAlgorithms.getInputFromText("textfiles/int50.txt")); 
+        textfiles.put("int100.txt", SortingAlgorithms.getInputFromText("textfiles/int100.txt")); 
+        textfiles.put("int1000.txt", SortingAlgorithms.getInputFromText("textfiles/int1000.txt")); 
+        textfiles.put("bad.txt", SortingAlgorithms.getInputFromText("textfiles/bad.txt")); 
+        textfiles.put("int20k.txt", SortingAlgorithms.getInputFromText("textfiles/int20k.txt")); 
+        textfiles.put("dutch.txt", SortingAlgorithms.getInputFromText("textfiles/dutch.txt")); 
+        textfiles.put("int500k.txt", SortingAlgorithms.getInputFromText("textfiles/int500k.txt")); 
+        textfiles.put("intBig.txt", SortingAlgorithms.getInputFromText("textfiles/intBig.txt")); 
     }
 
     public static void main(String[] args)
