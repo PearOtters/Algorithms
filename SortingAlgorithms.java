@@ -1,5 +1,4 @@
 import java.util.function.Function;
-import java.util.stream.IntStream;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.LinkedHashMap;
@@ -12,17 +11,62 @@ import java.io.IOException;
 public class SortingAlgorithms
 {
     public static final Map<String, Function<int[], int[]>> funcs = new LinkedHashMap<>();
+    public static final Map<String, int[]> textfiles = new LinkedHashMap<>();
+
     static {
-        funcs.put("Insertion sort", SortingAlgorithms::insertionSort); 
-        funcs.put("Selection sort", SortingAlgorithms::selectionSort); 
-        funcs.put("Shell sort", SortingAlgorithms::shellSort); 
-        funcs.put("Merge sort", SortingAlgorithms::mergeSort); 
-        funcs.put("Merge-Insertion sort", SortingAlgorithms::hybridMergeSort); 
-        funcs.put("Bottom Up Merge sort", SortingAlgorithms::bottomUpMergeSort); 
-        funcs.put("Quick sort", SortingAlgorithms::quickSort); 
-        funcs.put("Quick-Insertion sort", SortingAlgorithms::hybridQuickSort); 
-        funcs.put("Median of 3 Quick sort", SortingAlgorithms::medianOf3); 
-        funcs.put("Dutch Flag Quick sort", SortingAlgorithms::dutchFlag); 
+        funcs.put("Insertion sort", InsertionSort::insertionSort); 
+        funcs.put("Selection sort", SelectionSort::selectionSort); 
+        funcs.put("Shell sort", ShellSort::shellSort); 
+        funcs.put("Merge sort", MergeSort::mergeSort); 
+        funcs.put("Merge-Insertion sort", MergeSort::hybridMergeSort); 
+        funcs.put("Bottom Up Merge sort", MergeSort::bottomUpMergeSort); 
+        funcs.put("Quick sort", QuickSort::quickSort); 
+        funcs.put("Quick-Insertion sort", QuickSort::hybridQuickSort); 
+        funcs.put("Median of 3 Quick sort", QuickSort::medianOf3); 
+        funcs.put("Dutch Flag Quick sort", QuickSort::dutchFlag); 
+
+        textfiles.put("int10.txt", SortingAlgorithms.getInputFromText("int10.txt")); 
+        textfiles.put("int50.txt", SortingAlgorithms.getInputFromText("int50.txt")); 
+        textfiles.put("int100.txt", SortingAlgorithms.getInputFromText("int100.txt")); 
+        textfiles.put("int1000.txt", SortingAlgorithms.getInputFromText("int1000.txt")); 
+        textfiles.put("bad.txt", SortingAlgorithms.getInputFromText("bad.txt")); 
+        textfiles.put("int20k.txt", SortingAlgorithms.getInputFromText("int20k.txt")); 
+        textfiles.put("dutch.txt", SortingAlgorithms.getInputFromText("dutch.txt")); 
+        textfiles.put("int500k.txt", SortingAlgorithms.getInputFromText("int500k.txt")); 
+        textfiles.put("intBig.txt", SortingAlgorithms.getInputFromText("intBig.txt")); 
+    }
+
+    public static void main(String[] args)
+    {
+        testAlgorithms(textfiles.get("int100.txt"));
+        testTimes(textfiles);
+    }
+
+    public static boolean testAlgorithms(int[] input)
+    {
+        for (String funcName : SortingAlgorithms.funcs.keySet())
+        {
+            System.out.println(funcName);
+            boolean isSorted = SortingAlgorithms.testSortingAlgorithm(SortingAlgorithms.funcs.get(funcName), input.clone(), false);
+            System.out.println("Is sorted: " + isSorted);
+            System.out.println("____________________________________________________________________\n");
+            if (!isSorted) return false;
+        }
+        return true;
+    }
+
+    public static void testTimes(Map<String, int[]> textfiles)
+    {
+        for (String textfile : textfiles.keySet())
+        {
+            System.out.println("Testing for " + textfile + "\n");
+            for (String funcName : SortingAlgorithms.funcs.keySet())
+            {
+                long algDuration = SortingAlgorithms.timeAlgorithm(SortingAlgorithms.funcs.get(funcName), textfiles.get(textfile).clone(), false);
+                System.out.println(funcName + " took " + algDuration + "ns or " + algDuration / 1_000_000 + "ms to sort");
+            }
+            System.out.println("\n____________________________________________________________________\n\n");
+        }
     }
 
     public static int[] getInputFromText(String filename)
@@ -83,249 +127,5 @@ public class SortingAlgorithms
         int temp = input[i];
         input[i] = input[j];
         input[j] = temp;
-    }
-
-    public static int[] insertionSort(int[] input)
-    {
-        int n = input.length;
-        for (int j = 1; j < n; j++)
-        {
-            int key = input[j];
-            int i = j - 1;
-            while (i >= 0 && input[i] > key)
-            {
-                input[i + 1] = input[i];
-                i--;
-            }
-            input[i + 1] = key;
-        }
-        return input;
-    }
-
-    public static void insertionSort(int[] input, int p, int r)
-    {
-        for (int j = p + 1; j <= r; j++)
-        {
-            int key = input[j];
-            int i = j - 1;
-            while (i >= p && input[i] > key)
-            {
-                input[i + 1] = input[i];
-                i--;
-            }
-            input[i + 1] = key;
-        }
-    }
-
-    public static int[] selectionSort(int[] input)
-    {
-        int n = input.length;
-        for (int i = 0; i < n; i++)
-        {
-            int minIndex = i;
-            for (int j = i; j < n; j++)
-            {
-                if (input[j] < input[minIndex])
-                {
-                    minIndex = j;
-                }
-            }
-            swap(input, i, minIndex);
-        }
-        return input;
-    }
-    
-    public static int[] shellSort(int[] input)
-    {
-        int h = 1; int n = input.length;
-        while (h < n / 3)
-        {
-            h = 3 * h + 1;
-        }
-        while (h >= 1)
-        {
-            for (int i = h; i < n; i++)
-            {
-                for (int j = i; j >= h && input[j] < input[j-h]; j-=h)
-                {
-                    swap(input, j, j - h);
-                }
-            }
-            h /= 3;
-        }
-        return input;
-    }
-
-    public static int[] mergeSort(int[] input)
-    {
-        mergeSort(input, 0, input.length - 1);
-        return input;
-    }
-
-    private static void mergeSort(int[] input, int p, int r)
-    {
-        if (p < r)
-        {
-            int q = (p + r) / 2;
-            mergeSort(input, p, q);
-            mergeSort(input, q + 1, r);
-            merge(input, p, q, r);
-        }
-    }
-
-    private static void merge(int[] input, int p, int q, int r)
-    {
-        int[] L = IntStream.concat(Arrays.stream(Arrays.copyOfRange(input, p, q + 1)), Arrays.stream(new int[]{ Integer.MAX_VALUE })).toArray();
-        int[] R = IntStream.concat(Arrays.stream(Arrays.copyOfRange(input, q + 1, r + 1)), Arrays.stream(new int[]{ Integer.MAX_VALUE })).toArray();
-        int i = 0, j = 0;
-        for (int k = p; k <= r; k++)
-        {
-            if (L[i] <= R[j])
-            {
-                input[k] = L[i];
-                i++;
-            }
-            else
-            {
-                input[k] = R[j];
-                j++;
-            }
-        }
-    }
-
-    public static int[] hybridMergeSort(int[] input)
-    {
-        hybridMergeSort(input, 0, input.length - 1);
-        return input;
-    }
-
-    private static void hybridMergeSort(int[] input, int p, int r)
-    {
-        if (p < r)
-        {
-            if (r - p + 1 > 64)
-            {
-                int q = (p + r) / 2;
-                hybridMergeSort(input, p, q);
-                hybridMergeSort(input, q + 1, r);
-                merge(input, p, q, r);
-            }
-            else
-            {
-                insertionSort(input, p, r);
-            }
-        }
-    }
-
-    public static int[] bottomUpMergeSort(int[] input)
-    {
-        bottomUpMergeSort(input, 0, input.length - 1);
-        return input;
-    }
-
-    public static void bottomUpMergeSort(int[] input, int p, int r)
-    {
-        int n = r - p + 1;
-        for (int sz = 1; sz < n; sz*=2)
-        {
-            for (p = 0; p < n-sz; p+=sz*2)
-            {
-                merge(input, p, p+sz-1, Math.min(p+sz*2-1, n-1));
-            }
-        }
-    }
-
-    public static int[] quickSort(int[] input)
-    {
-        quickSort(input, 0, input.length-1);
-        return input;
-    }
-
-    public static void quickSort(int[] input, int p, int r)
-    {
-        if (p < r)
-        {
-            int q = partition(input, p, r);
-            quickSort(input, p, q-1);
-            quickSort(input, q+1, r);
-        }
-    }
-
-    public static int partition(int[] input, int p, int r)
-    {
-        int x = input[r];
-        int i = p - 1;
-        for (int j = p; j < r; j++)
-        {
-            if (input[j] <= x)
-            {
-                i++;
-                swap(input, i, j);
-            }
-        }
-        swap(input, i + 1, r);
-        return i + 1;
-    }
-
-    public static int[] hybridQuickSort(int[] input)
-    {
-        hybridQuickSort(input, 0, input.length-1);
-        insertionSort(input, 0, input.length-1);
-        return input;   
-    }
-
-    private static void hybridQuickSort(int[] input, int p, int r)
-    {
-        if (r - p <= 64) return;
-        int q = partition(input, p, r);
-        hybridQuickSort(input, p, q-1);
-        hybridQuickSort(input, q+1, r);
-    }
-
-    public static int[] medianOf3(int[] input)
-    {
-        medianOf3(input, 0, input.length-1);
-        return input;
-    }
-
-    public static void medianOf3(int[] input, int p, int r)
-    {
-        if (r <= p) return;
-        swap(input, (p+r)/2, r-1);
-        if (input[r-1] < input[p]) swap (input, p, r-1);
-        if (input[r] < input[p]) swap (input, p, r);
-        if (input[r] < input[r-1]) swap (input, r-1, r);
-        int q = partition(input, p, r);
-        medianOf3(input, p, q-1);
-        medianOf3(input, q+1, r);
-    }
-
-    public static int[] dutchFlag(int[] input)
-    {
-        dutchFlag(input, 0, input.length-1);
-        return input;
-    }
-
-    public static void dutchFlag(int[] input, int p, int r)
-    {
-        if (r <= p) return;
-        int v = input[r];
-        int i = p-1, j=r, l=p-1, q=r, k;
-        for (;;)
-        {
-            while (input[++i] < v);
-            while (v < input[--j]) if (j == p) break;
-            if (i >= j) break;
-            swap(input, i, j);
-            if (input[i] == v) { l++; swap(input, l, i); }
-            if (v == input[j]) { q--; swap(input, q, j); }
-        }
-        swap(input, i, r);
-        j = i-1;
-        i++;
-        for (k = p; k <= l; k++, j--) swap(input, k, j);
-        for (k = r-1; k >= q; k--, i++) swap(input, k, i);
-        dutchFlag(input, p, j);
-        dutchFlag(input, i, r);
     }
 }
