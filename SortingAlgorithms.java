@@ -152,7 +152,7 @@ public class SortingAlgorithms
         }
         saveTimesToFile("times/" + funcName.replace(" ", "_") + "_" + filename + ".txt", times, funcName);
         System.out.println("Average time taken: " + totalTime / repeats + "ns or " + totalTime / repeats / 1_000_000 + "ms");
-        System.out.println("____________________________________________________________________\n\n");
+        System.out.println("\n____________________________________________________________________\n\n");
         return totalTime / repeats;
     }
 
@@ -184,6 +184,7 @@ public class SortingAlgorithms
         {
             System.out.println(textfiles.keySet().toArray()[i] + " took " + times.get(i) + "ns or " + times.get(i) / 1_000_000 + "ms to sort");
         }
+        System.out.println("\n____________________________________________________________________\n\n");
     }
 
     private static void saveTimesToFile(String filename, List<Long> input, String funcName)
