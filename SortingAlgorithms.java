@@ -6,7 +6,7 @@ import java.util.Map;
 import java.util.List;
 import java.io.BufferedReader;
 import java.io.FileReader;
-import java.io.IOException;
+import java.io.PrintWriter;
 
 public class SortingAlgorithms
 {
@@ -25,30 +25,31 @@ public class SortingAlgorithms
         funcs.put("Median of 3 Quick sort", QuickSort::medianOf3); 
         funcs.put("Dutch Flag Quick sort", QuickSort::dutchFlag); 
 
-        textfiles.put("int10.txt", SortingAlgorithms.getInputFromText("textfiles/int10.txt")); 
-        textfiles.put("int50.txt", SortingAlgorithms.getInputFromText("textfiles/int50.txt")); 
-        textfiles.put("int100.txt", SortingAlgorithms.getInputFromText("textfiles/int100.txt")); 
-        textfiles.put("int1000.txt", SortingAlgorithms.getInputFromText("textfiles/int1000.txt")); 
-        textfiles.put("bad.txt", SortingAlgorithms.getInputFromText("textfiles/bad.txt")); 
-        textfiles.put("int20k.txt", SortingAlgorithms.getInputFromText("textfiles/int20k.txt")); 
-        textfiles.put("dutch.txt", SortingAlgorithms.getInputFromText("textfiles/dutch.txt")); 
-        textfiles.put("int500k.txt", SortingAlgorithms.getInputFromText("textfiles/int500k.txt")); 
-        textfiles.put("intBig.txt", SortingAlgorithms.getInputFromText("textfiles/intBig.txt")); 
+        textfiles.put("int10", getInputFromText("textfiles/int10.txt")); 
+        textfiles.put("int50", getInputFromText("textfiles/int50.txt")); 
+        textfiles.put("int100", getInputFromText("textfiles/int100.txt")); 
+        textfiles.put("int1000", getInputFromText("textfiles/int1000.txt")); 
+        textfiles.put("bad", getInputFromText("textfiles/bad.txt")); 
+        textfiles.put("int20k", getInputFromText("textfiles/int20k.txt")); 
+        textfiles.put("dutch", getInputFromText("textfiles/dutch.txt")); 
+        textfiles.put("int500k", getInputFromText("textfiles/int500k.txt")); 
+        textfiles.put("intBig", getInputFromText("textfiles/intBig.txt")); 
     }
 
     public static void main(String[] args)
     {
-        //testAlgorithms(textfiles.get("int100.txt"));
-        //testTimes(textfiles);
-        testAllAlgorithmTimesWithTextFile("int20k.txt", 10);
+        for (String funcName : funcs.keySet())
+        {
+            testAlgorithmTimesWithAllTextFiles(funcName, 10);
+        }
     }
 
     public static boolean testAlgorithms(int[] input)
     {
-        for (String funcName : SortingAlgorithms.funcs.keySet())
+        for (String funcName : funcs.keySet())
         {
             System.out.println(funcName);
-            boolean isSorted = SortingAlgorithms.testSortingAlgorithm(SortingAlgorithms.funcs.get(funcName), input.clone(), false);
+            boolean isSorted = testSortingAlgorithm(funcs.get(funcName), input.clone(), false);
             System.out.println("Is sorted: " + isSorted);
             System.out.println("____________________________________________________________________\n");
             if (!isSorted) return false;
@@ -61,9 +62,9 @@ public class SortingAlgorithms
         for (String textfile : textfiles.keySet())
         {
             System.out.println("Testing for " + textfile + "\n");
-            for (String funcName : SortingAlgorithms.funcs.keySet())
+            for (String funcName : funcs.keySet())
             {
-                long algDuration = SortingAlgorithms.timeAlgorithm(SortingAlgorithms.funcs.get(funcName), textfiles.get(textfile).clone(), false);
+                long algDuration = timeAlgorithm(funcs.get(funcName), textfiles.get(textfile).clone(), false);
                 System.out.println(funcName + " took " + algDuration + "ns or " + algDuration / 1_000_000 + "ms to sort");
             }
             System.out.println("\n____________________________________________________________________\n\n");
@@ -78,7 +79,7 @@ public class SortingAlgorithms
             while ((line = br.readLine()) != null) {
                 list.add(Integer.parseInt(line));
             }
-        } catch (IOException e) {
+        } catch (Exception e) {
             e.printStackTrace();
         }
         int[] input = new int[list.size()];
@@ -130,17 +131,26 @@ public class SortingAlgorithms
         input[j] = temp;
     }
 
-    public static long testAlgorithmTimesWithTextFile(Function<int[], int[]> func, String filename, int repeats)
+    public static long testAlgorithmTimesWithTextFile(String funcName, String filename, int repeats)
     {
         int[] input = textfiles.get(filename);
+        List<Long> times = new ArrayList<Long>();
         long totalTime = 0;
-        for (int i = 0; i < repeats; i++)
+        for (int i = 0; i < repeats + 2; i++)
         {
-            System.out.println("Test " + i + " for " + filename);
-            long timeTaken = timeAlgorithm(func, input, false);
-            System.out.println("Time taken: " + timeTaken + "ns or " + timeTaken / 1_000_000 + "ms");
-            totalTime += timeTaken;
+            if (i > 1)
+            {
+                System.out.println("Test " + (i - 1) + " for " + filename);
+            }
+            long timeTaken = timeAlgorithm(funcs.get(funcName), input, false);
+            if (i > 1)
+            {
+                System.out.println("Time taken: " + timeTaken + "ns or " + timeTaken / 1_000_000 + "ms");
+                times.add(timeTaken);
+                totalTime += timeTaken;
+            }
         }
+        saveTimesToFile("times/" + funcName.replace(" ", "_") + "_" + filename + ".txt", times, funcName);
         System.out.println("Average time taken: " + totalTime / repeats + "ns or " + totalTime / repeats / 1_000_000 + "ms");
         System.out.println("____________________________________________________________________\n\n");
         return totalTime / repeats;
@@ -149,14 +159,47 @@ public class SortingAlgorithms
     public static void testAllAlgorithmTimesWithTextFile(String filename, int repeats)
     {
         List<Long> times = new ArrayList<Long>();
-        for (String funcName : SortingAlgorithms.funcs.keySet())
+        for (String funcName : funcs.keySet())
         {
-            times.add(testAlgorithmTimesWithTextFile(SortingAlgorithms.funcs.get(funcName), filename, repeats));
+            System.out.println("Testing for " + funcName);
+            times.add(testAlgorithmTimesWithTextFile(funcName, filename, repeats));
         }
         System.out.println("Average times for " + filename + " with " + repeats + " repeats");
         for (int i = 0; i < times.size(); i++)
         {
-            System.out.println(SortingAlgorithms.funcs.keySet().toArray()[i] + " took " + times.get(i) + "ns or " + times.get(i) / 1_000_000 + "ms to sort");
+            System.out.println(funcs.keySet().toArray()[i] + " took " + times.get(i) + "ns or " + times.get(i) / 1_000_000 + "ms to sort");
+        }
+    }
+
+    public static void testAlgorithmTimesWithAllTextFiles(String funcName, int repeats)
+    {
+        List<Long> times = new ArrayList<Long>();
+        for (String textfile : textfiles.keySet())
+        {
+            System.out.println("Testing for " + textfile);
+            times.add(testAlgorithmTimesWithTextFile(funcName, textfile, repeats));
+        }
+        System.out.println("Average times for " + funcName + " with " + repeats + " repeats");
+        for (int i = 0; i < times.size(); i++)
+        {
+            System.out.println(textfiles.keySet().toArray()[i] + " took " + times.get(i) + "ns or " + times.get(i) / 1_000_000 + "ms to sort");
+        }
+    }
+
+    private static void saveTimesToFile(String filename, List<Long> input, String funcName)
+    {
+        try (PrintWriter writer = new PrintWriter(filename))
+        {
+            writer.println(funcName + "\n");
+            long total = 0; 
+            for (long i : input)
+            {
+                writer.println(i + " " + i / 1_000_000);
+                total += i;
+            }
+            writer.println("\n" + total / input.size() + " " + total / input.size() / 1_000_000);
+        } catch (Exception e) {
+            e.printStackTrace();
         }
     }
 }
