@@ -1,3 +1,4 @@
+package Part1;
 public class QuickSort {
     public static int[] quickSort(int[] input)
     {

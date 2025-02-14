@@ -1,3 +1,5 @@
+package Part1;
+
 import java.util.function.Function;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -23,7 +25,7 @@ public class SortingAlgorithms
         funcs.put("Quick sort", QuickSort::quickSort); 
         funcs.put("Quick-Insertion sort", QuickSort::hybridQuickSort); 
         funcs.put("Median of 3 Quick sort", QuickSort::medianOf3); 
-        funcs.put("Dutch Flag Quick sort", QuickSort::dutchFlag); 
+        funcs.put("Dutch Flag Quick sort", QuickSort::dutchFlag);
 
         textfiles.put("int10", getInputFromText("textfiles/int10.txt")); 
         textfiles.put("int50", getInputFromText("textfiles/int50.txt")); 
