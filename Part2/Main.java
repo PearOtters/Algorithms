@@ -2,7 +2,7 @@ package Part2;
 
 import Part1.SortingAlgorithms;
 
-public class Part2
+public class Main
 {
     public static void main(String[] arg)
     {
